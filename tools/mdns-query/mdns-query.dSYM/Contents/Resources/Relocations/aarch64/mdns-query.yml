@@ -1,5 +1,0 @@
----
-triple:          'arm64-apple-darwin'
-binary-path:     '/Users/haixin/Desktop/github/mdns-learning/tools/mdns-query/mdns-query'
-relocations:     []
-...
