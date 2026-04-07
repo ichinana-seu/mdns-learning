@@ -699,7 +699,7 @@ open_service_sockets(int* sockets, int max_sockets) {
 	return num_sockets;
 }
 
-// Send a DNS-SD query (_services._dns-sd._udp.local) PTR record
+// Send a DNS-SD query
 static int
 send_dns_sd(void) {
 	int sockets[32];
@@ -1160,8 +1160,6 @@ void signal_handler(int signal) {
 
 int
 main(int argc, const char* const* argv) {
-	printf("mDNS Discovery (mdns-query)\n");
-	
 	int mode = 0;
 	const char* service = "_test-mdns._tcp.local.";
 	const char* hostname = "dummy-host";
@@ -1192,42 +1190,69 @@ main(int argc, const char* const* argv) {
 		hostname = hostname_buffer;
 	signal(SIGINT, signal_handler);
 #endif
-	// analyse the options
+
 	for (int iarg = 0; iarg < argc; ++iarg) {
-		if ((strcmp(argv[iarg], "--help") == 0) || (strcmp(argv[iarg], "-h") == 0) ) {
-			printf("     Function: Query specific services and get a detailed response. (1.0.1)\n");
-			printf("    Mechanism: Search \"<service_name>\" and receive all-type records from the network.\n");
-			printf("        Usage: Type \"mdns-query <service_name>\" with no option.\n");
-			printf("      Example: \"mdns-query _airplay._tcp.local.\" to acquire details of all Apple Airplay devices.\n");
-			return 1;
+		if (strcmp(argv[iarg], "--discovery") == 0) {
+			mode = 0;
+		} else if (strcmp(argv[iarg], "--query") == 0) {
+			// Each query is either a service name, or a pair of record type and a service name
+			// For example:
+			//  mdns --query _foo._tcp.local.
+			//  mdns --query SRV myhost._foo._tcp.local.
+			//  mdns --query A myhost._tcp.local. _service._tcp.local.
+			mode = 1;
+			++iarg;
+			while ((iarg < argc) && (query_count < 16)) {
+				query[query_count].name = argv[iarg++];
+				query[query_count].type = MDNS_RECORDTYPE_PTR;
+				if (iarg < argc) {
+					mdns_record_type_t record_type = 0;
+					if (strcmp(query[query_count].name, "PTR") == 0)
+						record_type = MDNS_RECORDTYPE_PTR;
+					else if (strcmp(query[query_count].name, "SRV") == 0)
+						record_type = MDNS_RECORDTYPE_SRV;
+					else if (strcmp(query[query_count].name, "A") == 0)
+						record_type = MDNS_RECORDTYPE_A;
+					else if (strcmp(query[query_count].name, "AAAA") == 0)
+						record_type = MDNS_RECORDTYPE_AAAA;
+					if (record_type != 0) {
+						query[query_count].type = record_type;
+						query[query_count].name = argv[iarg++];
+					}
+				}
+				query[query_count].length = strlen(query[query_count].name);
+				++query_count;
+			}
+		} else if (strcmp(argv[iarg], "--service") == 0) {
+			mode = 2;
+			++iarg;
+			if (iarg < argc)
+				service = argv[iarg];
+		} else if (strcmp(argv[iarg], "--dump") == 0) {
+			mode = 3;
+		} else if (strcmp(argv[iarg], "--hostname") == 0) {
+			++iarg;
+			if (iarg < argc)
+				hostname = argv[iarg];
+		} else if (strcmp(argv[iarg], "--port") == 0) {
+			++iarg;
+			if (iarg < argc)
+				service_port = atoi(argv[iarg]);
 		}
 	}
-	if (argc==1 || argc>2){
-		printf("Invalid command. \"mdns-query -h\" for help\n\n");
-		return 2;
-	}
-
-
-	// start
-	query[query_count].name = argv[1];
-	query[query_count].type = MDNS_RECORDTYPE_PTR;
-	mdns_record_type_t record_type = 0;
-	record_type = MDNS_RECORDTYPE_PTR; //12
-	/*
-	if (record_type != 0) {
-		query[query_count].type = record_type;
-		query[query_count].name = argv[iarg++];
-	}
-	*/
-	query[query_count].length = strlen(query[query_count].name);
-	++query_count;
-
 
 #ifdef MDNS_FUZZING
 	fuzz_mdns();
 #else
 	int ret;
-	ret = send_mdns_query(query, query_count);
+	if (mode == 0)
+		ret = send_dns_sd();
+	else if (mode == 1)
+		ret = send_mdns_query(query, query_count);
+	else if (mode == 2)
+		ret = service_mdns(hostname, service, service_port);
+	else if (mode == 3)
+		ret = dump_mdns();
 #endif
 
 #ifdef _WIN32
