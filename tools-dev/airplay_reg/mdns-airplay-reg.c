@@ -1004,7 +1004,7 @@ main(int argc, const char* const* argv) {
 	const char* hostname = "dummy-host";
 	mdns_query_t query[16];
 	size_t query_count = 0;
-	int service_port = 7001;
+	int service_port = 7005;
 
 #ifdef _WIN32
 
@@ -1017,8 +1017,8 @@ main(int argc, const char* const* argv) {
 
 	char hostname_buffer[256];
 	DWORD hostname_size = (DWORD)sizeof(hostname_buffer);
-	if (GetComputerNameA(hostname_buffer, &hostname_size))
-		hostname = hostname_buffer;
+	//if (GetComputerNameA(hostname_buffer, &hostname_size))
+	//	hostname = hostname_buffer;
 
 	SetConsoleCtrlHandler(console_handler, TRUE);
 #else
