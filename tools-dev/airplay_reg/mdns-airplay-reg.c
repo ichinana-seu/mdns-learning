@@ -942,7 +942,7 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	// Send a goodbye on end of service
 	{
 		printf("Sending goodbye\n");
-		mdns_record_t additional[5] = {0};					// 3+(17+1)
+		mdns_record_t additional[21] = {0};					// 3+(17+1)
 		size_t additional_count = 0;
 		additional[additional_count++] = service.record_srv;
 		if (service.address_ipv4.sin_family == AF_INET)
