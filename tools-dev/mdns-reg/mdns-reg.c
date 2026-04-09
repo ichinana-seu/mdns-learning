@@ -52,6 +52,7 @@ typedef struct {
 	mdns_string_t hostname;
 	mdns_string_t service_instance;
 	mdns_string_t hostname_qualified;
+	mdns_string_t deviceinfo_instance;						// CN-hxs-macmini._device-info._tcp.local.
 	struct sockaddr_in address_ipv4;
 	struct sockaddr_in6 address_ipv6;
 	int port;
@@ -59,7 +60,7 @@ typedef struct {
 	mdns_record_t record_srv;
 	mdns_record_t record_a;
 	mdns_record_t record_aaaa;
-	mdns_record_t txt_record[10];
+	mdns_record_t txt_record[22];
 } service_t;
 
 static mdns_string_t
@@ -887,11 +888,19 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	mdns_string_t hostname_qualified_string =
 	    (mdns_string_t){qualified_hostname_buffer, strlen(qualified_hostname_buffer)};
 
+	// Build the "<hostname>._device-info._tcp.local." string
+	char deviceinfo_instance_buffer[256] = {0};
+	snprintf(deviceinfo_instance_buffer, sizeof(deviceinfo_instance_buffer) - 1, "%.*s._device-info._tcp.local.",
+	         MDNS_STRING_FORMAT(hostname_string));
+	mdns_string_t deviceinfo_instance_string =
+	    (mdns_string_t){deviceinfo_instance_buffer, strlen(deviceinfo_instance_buffer)};
+
 	service_t service = {0};
 	service.service = service_string;
 	service.hostname = hostname_string;
 	service.service_instance = service_instance_string;
 	service.hostname_qualified = hostname_qualified_string;
+	service.deviceinfo_instance = deviceinfo_instance_string;		// CN-hxs-macmini._device-info._tcp.local.
 	service.address_ipv4 = service_address_ipv4;
 	service.address_ipv6 = service_address_ipv6;
 	service.port = service_port;
@@ -940,10 +949,10 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	                                        .rclass = 0,
 	                                        .ttl = 0};
 	
-	service.txt_record[1] = (mdns_record_t){.name = service.service_instance,
+	service.txt_record[1] = (mdns_record_t){.name = service.deviceinfo_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
-	                                        .data.txt.key = {MDNS_STRING_CONST("other")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("value")},
+	                                        .data.txt.key = {MDNS_STRING_CONST("mdns-device-info")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("novalue")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};
 	
@@ -1168,9 +1177,7 @@ main(int argc, const char* const* argv) {
 	int mode = 2;
 	const char* service = "_test-mdns._tcp.local.";
 	const char* hostname = "dummy-host";
-	mdns_query_t query[16];
-	size_t query_count = 0;
-	int service_port = 42424;
+	int service_port = 7007;
 
 #ifdef _WIN32
 
@@ -1183,8 +1190,8 @@ main(int argc, const char* const* argv) {
 
 	char hostname_buffer[256];
 	DWORD hostname_size = (DWORD)sizeof(hostname_buffer);
-	if (GetComputerNameA(hostname_buffer, &hostname_size))
-		hostname = hostname_buffer;
+	//if (GetComputerNameA(hostname_buffer, &hostname_size))
+	//	hostname = hostname_buffer;
 
 	SetConsoleCtrlHandler(console_handler, TRUE);
 #else

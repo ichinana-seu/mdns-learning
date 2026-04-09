@@ -711,7 +711,7 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	mdns_string_t hostname_qualified_string =
 	    (mdns_string_t){qualified_hostname_buffer, strlen(qualified_hostname_buffer)};
 
-	// Build the "<hostname>.local." string
+	// Build the "<hostname>._device-info._tcp.local." string
 	char deviceinfo_instance_buffer[256] = {0};
 	snprintf(deviceinfo_instance_buffer, sizeof(deviceinfo_instance_buffer) - 1, "%.*s._device-info._tcp.local.",
 	         MDNS_STRING_FORMAT(hostname_string));
@@ -781,7 +781,7 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	service.txt_record[2] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("fex")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("1c9/St5PFzg2IYxA")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("1c9/St5PFzg2IQw")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};
 	service.txt_record[3] = (mdns_record_t){.name = service.service_instance,
@@ -793,13 +793,13 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	service.txt_record[4] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("flags")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("0x204")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("0x4")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};
 	service.txt_record[5] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("gid")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("88745B7E-4229-4871-B82C-B946BAE87ECE")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("98F19F06-22F0-45A4-A956-60440E29FFE5")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};
 	service.txt_record[6] = (mdns_record_t){.name = service.service_instance,
@@ -817,7 +817,7 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	service.txt_record[8] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("model")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("Mac16,10")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("MacBookAir10,1")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};
 	service.txt_record[9] = (mdns_record_t){.name = service.service_instance,
@@ -841,31 +841,31 @@ service_mdns(const char* hostname, const char* service_name, int service_port) {
 	service.txt_record[12] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("psi")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("C1DFEBC6-A726-4254-9AF2-53E1A882860E")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("01317B08-3CC0-47C9-83EB-AB3A4D93C452")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};	
 	service.txt_record[13] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("pk")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("fb4b79da0067b97d2e100668ad1b6fa3ab195d05986bd4e7d6f5019064beb635")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("493a37d64888c5a53a07a92d248a951bb19d79b63b58fe48a77a77bac5e1d230")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};	
 	service.txt_record[14] = (mdns_record_t){.name = service.service_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("srcvers")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("940.23.1")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("870.14.1")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};	
 	service.txt_record[15] = (mdns_record_t){.name = service.deviceinfo_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("model")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("Mac16,10")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("MacBookAir10,1")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};	
 	service.txt_record[16] = (mdns_record_t){.name = service.deviceinfo_instance,
 	                                        .type = MDNS_RECORDTYPE_TXT,
 	                                        .data.txt.key = {MDNS_STRING_CONST("osxvers")},
-	                                        .data.txt.value = {MDNS_STRING_CONST("25")},
+	                                        .data.txt.value = {MDNS_STRING_CONST("24")},
 	                                        .rclass = 0,
 	                                        .ttl = 0};	
 	service.txt_record[17] = (mdns_record_t){.name = service.deviceinfo_instance,
@@ -1002,8 +1002,6 @@ main(int argc, const char* const* argv) {
 	int mode = 2;
 	const char* service = "_airplay._tcp.local.";
 	const char* hostname = "dummy-host";
-	mdns_query_t query[16];
-	size_t query_count = 0;
 	int service_port = 7005;
 
 #ifdef _WIN32
